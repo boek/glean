@@ -636,11 +636,6 @@ open class GleanInternalAPI internal constructor () {
             return
         }
 
-        if (!internalGetUploadEnabled()) {
-            Log.i(LOG_TAG, "Glean disabled: not submitting any pings.")
-            return
-        }
-
         val submittedPing = LibGleanFFI.INSTANCE.glean_submit_ping_by_name(
             pingName,
             reason
