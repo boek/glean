@@ -803,14 +803,9 @@ class GleanTest {
         // Trigger worker task to upload any submitted ping.
         // We need to wait for the work to be enqueued first,
         // since this test runs asynchronously.
-        waitForEnqueuedWorker(context, PingUploadWorker.PING_WORKER_TAG)
-        // Try to trigger the workmanager,
-        // but if that fails assume it already ran and the server received something.
-        try {
-            triggerWorkManager(context)
-        } catch (e: AssertionError){
-            // intentionally left blank
-        }
+        val workerFound = waitForEnqueuedWorker(context, PingUploadWorker.PING_WORKER_TAG)
+        assertEquals(true, workerFound)
+        triggerWorkManager(context)
 
         // Validate the received data.
         val request = server.takeRequest(10L, TimeUnit.SECONDS)

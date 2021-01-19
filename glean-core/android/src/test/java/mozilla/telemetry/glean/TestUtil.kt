@@ -204,16 +204,22 @@ internal fun waitForEnqueuedWorker(
     context: Context,
     workTag: String,
     timeoutMillis: Long = 5000
-) = runBlocking {
-    withTimeout(timeoutMillis) {
-        do {
-            if (getWorkerStatus(context, workTag).isEnqueued) {
-                return@withTimeout
-            }
-        } while (isActive)
+): Boolean {
+    var value = false
+    runBlocking {
+        withTimeout(timeoutMillis) {
+            do {
+                if (getWorkerStatus(context, workTag).isEnqueued) {
+                    value = true
+                    return@withTimeout
+                }
+            } while (isActive)
+            value = false
+        }
     }
-}
 
+    return value
+}
 /**
  * Helper function to simulate WorkManager being triggered since there appears to be a bug in
  * the current WorkManager test utilites that prevent it from being triggered by a test.  Once this
